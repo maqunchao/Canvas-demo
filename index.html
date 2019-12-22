@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="canvas.css" />
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      let canvas = document.getElementById("canvas");
+      canvas.width = document.documentElement.clientWidth;
+      canvas.height = document.documentElement.clientHeight;
+      let ctx = canvas.getContext("2d");
+
+      let painting = false;
+      ctx.fillStyle = "black";
+      ctx.strokeStyle = "none";
+      ctx.lineWidth = 5;
+      //连接点为圆点
+      ctx.lineCap = "round";
+
+      let lastPoint;
+
+      //判断是不是触摸屏
+      var isTouchDevice = "ontouchstart" in document.documentElement;
+      if (isTouchDevice) {
+        canvas.ontouchstart = e => {
+          let x = e.touches[0].clientX;
+          let y = e.touches[0].clientY;
+          lastPoint = [x, y];
+        };
+
+        canvas.ontouchmove = e => {
+          let x = e.touches[0].clientX;
+          let y = e.touches[0].clientY;
+          drawline(lastPoint[0], lastPoint[1], x, y);
+          lastPoint = [x, y];
+        };
+      } else {
+        canvas.onmousedown = e => {
+          painting = true;
+
+          lastPoint = [e.clientX, e.clientY];
+        };
+        canvas.onmousemove = e => {
+          if (painting === true) {
+            drawline(lastPoint[0], lastPoint[1], e.clientX, e.clientY);
+            lastPoint = [e.clientX, e.clientY];
+          }
+        };
+        canvas.onmouseup = () => {
+          painting = false;
+        };
+      }
+
+      //2点之间划线
+      function drawline(a, b, c, d) {
+        ctx.beginPath();
+        ctx.moveTo(a, b);
+        ctx.lineTo(c, d);
+        ctx.stroke();
+      }
+    </script>
+  </body>
+</html>
